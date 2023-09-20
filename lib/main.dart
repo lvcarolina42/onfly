@@ -7,6 +7,7 @@ import 'package:onfly/data/expenses/use_cases/get_api_expenses.dart';
 import 'package:onfly/data/expenses/use_cases/get_expense_local_storage.dart';
 import 'package:onfly/data/expenses/use_cases/post_api_expense.dart';
 import 'package:onfly/data/expenses/use_cases/save_expense_local_storage.dart';
+import 'package:onfly/data/expenses/use_cases/set_api_authorization.dart';
 import 'package:onfly/data/expenses/use_cases/update_api_expense.dart';
 import 'package:onfly/data/expenses/use_cases/update_expense_local_storage.dart';
 import 'package:onfly/data/system/localization_repository.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
               updateExpenseLocalStorage: UpdateExpenseLocalStorage(repository: expensesRepository),
               connectionStream: ConnectionStream(networkConnectivityRepository: networkConnectivityRepository),
               getLocalization: GetLocalization(localizationRepository: localizationRepository),
+              setApiAuthorization: SetApiAuthorization(repository: expensesRepository),
             );
           },
           child: const HomePage(),

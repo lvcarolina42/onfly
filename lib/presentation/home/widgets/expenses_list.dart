@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:onfly/data/expenses/model.dart';
+import 'package:onfly/data/expenses/models/expense_model.dart';
 import 'package:onfly/presentation/home/widgets/edit_expense_dialog.dart';
 
 class ExpensesList extends StatefulWidget {
-  const ExpensesList({super.key, required this.expenses, required this.onTapDelete, required this.onEditClick});
+  const ExpensesList({super.key, required this.expenses, required this.onTapDelete, required this.onTapEdit});
 
   final List<Expense> expenses;
   final Function(Expense) onTapDelete;
-  final Function(Expense, String, DateTime, double, double?, double?) onEditClick;
+  final Function(Expense, String, DateTime, double, double?, double?) onTapEdit;
 
   @override
   State<ExpensesList> createState() => _ExpensesListState();
@@ -87,7 +87,7 @@ class _ExpensesListState extends State<ExpensesList> {
                                       return EditExpenseDialog(
                                         expense: expense,
                                         onEditClick: (expense, description, date, amount, longitude, latitude) {
-                                          widget.onEditClick(expense, description, date, amount, longitude, latitude);
+                                          widget.onTapEdit(expense, description, date, amount, longitude, latitude);
                                         },
                                       );
                                     }
@@ -106,7 +106,7 @@ class _ExpensesListState extends State<ExpensesList> {
                                     builder: (context) {
                                       return AlertDialog(
                                         actionsAlignment: MainAxisAlignment.spaceAround,
-                                        content: Text("Certeza que deseja excluir esta despesa?"),
+                                        content: const Text("Certeza que deseja excluir esta despesa?"),
                                         actions: [
                                           MaterialButton(
                                             color: Colors.black12,

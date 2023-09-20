@@ -1,12 +1,27 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:onfly/data/expenses/model.dart';
+import 'package:onfly/data/expenses/models/user_credential_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'models/expense_model.dart';
 
 class ExpensesRepository {
   final String _api = "https://go-bd-api-3iyuzyysfa-uc.a.run.app/api";
-  final String _user = "PN0MKw";
-  final String _authorization = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWN0aW9uSWQiOiJfcGJfdXNlcnNfYXV0aF8iLCJleHAiOjE2OTYzNjM3NjEsImlkIjoidmo5bncwdmZjN3FzMzE4IiwidHlwZSI6ImF1dGhSZWNvcmQifQ.KLsGANS_-gIEpGl-o4MTOwl9T7wU7_lpw3hpopEYpUs";
+  final String _user = UserCredentialModel().identity;
+  var _authorization = "";
+
+  Future<void> setAuthorization() async {
+    final response = await post(
+      Uri.parse("$_api/collections/users/auth-with-password"),
+      headers: {
+        "Authorization": _authorization,
+        'Content-Type': 'application/json'
+      },
+      body: json.encode(UserCredentialModel().toJson()),
+    );
+
+    _authorization = userCredentialResponseFromJson(response.body).token;
+  }
 
   Future<List<Expense>> getApiExpenses() async {
     final response = await get(

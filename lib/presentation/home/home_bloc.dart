@@ -2,23 +2,23 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:onfly/data/expenses/model.dart';
 import 'package:onfly/data/expenses/use_cases/clean_local_storage.dart';
 import 'package:onfly/data/expenses/use_cases/delete_api_expense.dart';
 import 'package:onfly/data/expenses/use_cases/delete_expense_local_storage.dart';
 import 'package:onfly/data/expenses/use_cases/get_api_expenses.dart';
 import 'package:onfly/data/expenses/use_cases/get_expense_local_storage.dart';
 import 'package:onfly/data/expenses/use_cases/save_expense_local_storage.dart';
+import 'package:onfly/data/expenses/use_cases/set_api_authorization.dart';
 import 'package:onfly/data/expenses/use_cases/update_expense_local_storage.dart';
 import 'package:onfly/data/system/use_cases/get_localization.dart';
-import 'package:onfly/presentation/home/home_event.dart';
 import 'package:onfly/presentation/home/home_state.dart';
 
+import '../../data/expenses/models/expense_model.dart';
 import '../../data/expenses/use_cases/post_api_expense.dart';
 import '../../data/expenses/use_cases/update_api_expense.dart';
 import '../../data/system/use_cases/connection_stream.dart';
 
-class HomeBloc extends Bloc<HomeEvent, HomeState> {
+class HomeBloc extends Cubit<HomeState> {
 
   final GetApiExpenses getApiExpenses;
   final PostApiExpense postApiExpense;
@@ -31,9 +31,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final UpdateApiExpense updateApiExpense;
   final UpdateExpenseLocalStorage updateExpenseLocalStorage;
   final GetLocalization getLocalization;
+  final SetApiAuthorization setApiAuthorization;
 
   bool hasConnection = false;
   StreamSubscription? _connectionStream;
+  Position? position;
 
   HomeBloc({
     required this.getApiExpenses,
@@ -47,7 +49,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.updateApiExpense,
     required this.updateExpenseLocalStorage,
     required this.getLocalization,
+    required this.setApiAuthorization,
   }) : super(HomeStateLoading()) {
+    init();
+  }
+
+  void init() async {
+
+    await setApiAuthorization();
 
     _connectionStream = connectionStream.call().listen((event) async {
       hasConnection = event.isOnline;
@@ -56,17 +65,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         await saveLocalExpensesInApi();
       }
     });
-
-    init();
-  }
-
-  void init() async {
-    Position? position;
-    try{
-      position = await getLocalization();
-    } catch(e) {
-      position = null;
-    }
 
     try{
       final expenses = await getApiExpenses();
@@ -78,6 +76,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       } else {
         emit(HomeStateError());
       }
+    }
+  }
+
+  Future<void> setLocalization() async {
+    try{
+      position = await getLocalization();
+    } catch(e) {
+      position = null;
     }
   }
 

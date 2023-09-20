@@ -1,4 +1,4 @@
-import 'package:onfly/data/expenses/model.dart';
+import 'package:onfly/data/expenses/models/expense_model.dart';
 
 import '../repository.dart';
 

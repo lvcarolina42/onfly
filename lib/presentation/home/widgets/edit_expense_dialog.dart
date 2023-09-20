@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:onfly/data/expenses/model.dart';
+import 'package:onfly/data/expenses/models/expense_model.dart';
 
 class EditExpenseDialog extends StatefulWidget {
   const EditExpenseDialog({required this.onEditClick, required this.expense, super.key});
@@ -148,7 +148,7 @@ class _EditExpenseDialogState extends State<EditExpenseDialog> {
         MaterialButton(
           color: Colors.blueAccent,
           textColor: Colors.white,
-          child: const Text('Salvar'),
+          child: const Text("Salvar"),
           onPressed: () {
             Navigator.of(context).pop();
             widget.onEditClick(widget.expense, description, date, amount, latitude, longitude);
