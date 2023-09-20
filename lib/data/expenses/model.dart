@@ -30,32 +30,6 @@ class ExpensesResponse {
     totalPages: json["totalPages"],
     items: List<Expense>.from(json["items"].map((x) => Expense.fromJson(x))),
   );
-
-  Map<String, dynamic> toJson() => {
-    "page": page,
-    "perPage": perPage,
-    "totalItems": totalItems,
-    "totalPages": totalPages,
-    "items": List<dynamic>.from(items.map((x) => x.toJson())),
-  };
-}
-
-class ExpenseToPost {
-  final double amount;
-  final String description;
-  final DateTime expenseDate;
-
-  ExpenseToPost({
-    required this.amount,
-    required this.description,
-    required this.expenseDate,
-  });
-
-  Map<String, dynamic> toJson() => {
-    "amount": amount,
-    "description": description,
-    "expense_date": expenseDate.toIso8601String(),
-  };
 }
 
 class Expense {
@@ -66,35 +40,56 @@ class Expense {
   final String description;
   final DateTime expenseDate;
   final String? id;
-  final double latitude;
-  final double longitude;
+  final double? latitude;
+  final double? longitude;
   final DateTime? updated;
+  final bool isSaved;
 
   Expense({
     required this.amount,
+    required this.description,
+    required this.expenseDate,
+    required this.isSaved,
     this.collectionId,
     this.collectionName,
     this.created,
-    required this.description,
-    required this.expenseDate,
     this.id,
-    required this.latitude,
-    required this.longitude,
+    this.latitude,
+    this.longitude,
     this.updated,
   });
 
-  factory Expense.fromJson(Map<String, dynamic> json) => Expense(
-    amount: json["amount"]?.toDouble(),
-    collectionId: json["collectionId"],
-    collectionName: json["collectionName"],
-    created: DateTime.parse(json["created"]),
-    description: json["description"],
-    expenseDate: DateTime.parse(json["expense_date"]),
-    id: json["id"],
-    latitude: json["latitude"],
-    longitude: json["longitude"],
-    updated: DateTime.parse(json["updated"]),
-  );
+  Expense copyTo(String description, DateTime date, double amount, double? longitude, double? latitude) {
+    return Expense(
+      amount: amount,
+      collectionId: collectionId,
+      collectionName: collectionName,
+      created: created,
+      description: description,
+      expenseDate: expenseDate,
+      id: id,
+      latitude: latitude,
+      longitude: longitude,
+      updated: updated,
+      isSaved: isSaved,
+    );
+  }
+
+  factory Expense.fromJson(Map<String, dynamic> json) {
+    return Expense(
+      amount: json["amount"]?.toDouble(),
+      collectionId: json["collectionId"],
+      collectionName: json["collectionName"],
+      created: DateTime.parse(json["created"]),
+      description: json["description"],
+      expenseDate: DateTime.parse(json["expense_date"]),
+      id: json["id"],
+      latitude: double.parse(json["latitude"] != "" ? json["latitude"] : "0"),
+      longitude: double.parse(json["longitude"] != "" ? json["longitude"] : "0"),
+      updated: DateTime.parse(json["updated"]),
+      isSaved: true,
+    );
+  }
 
   factory Expense.fromJsonLocalStorage(Map<String, dynamic> json) {
     DateFormat format = DateFormat("yyyy-MM-dd");
@@ -105,21 +100,27 @@ class Expense {
       amount: json["amount"]?.toDouble(),
       description: json["description"],
       expenseDate: dateFormatted,
-      latitude: json["latitude"].toDouble(),
-      longitude: json["longitude"].toDouble(),
+      latitude: json["latitude"],
+      longitude: json["longitude"],
+      id: json["id"],
+      isSaved: false,
     );
   }
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJsonApi() => {
     "amount": amount,
-    "collectionId": collectionId,
-    "collectionName": collectionName,
-    "created": created?.toIso8601String(),
     "description": description,
     "expense_date": expenseDate.toIso8601String(),
-    "id": id,
+    "latitude": latitude ?? "",
+    "longitude": longitude ?? "",
+  };
+
+  Map<String, dynamic> toJsonLocalStorage(int id) => {
+    "amount": amount,
+    "description": description,
+    "expense_date": expenseDate.toIso8601String(),
+    "id": id.toString(),
     "latitude": latitude,
     "longitude": longitude,
-    "updated": updated?.toIso8601String(),
   };
 }

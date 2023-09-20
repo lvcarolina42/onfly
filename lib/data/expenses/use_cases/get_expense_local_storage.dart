@@ -6,5 +6,5 @@ class GetExpenseLocalStorage {
   final ExpensesRepository repository;
   GetExpenseLocalStorage({required this.repository});
 
-  Future<List<Expense>> call() => repository.getStringFromLocalStorage('expense');
+  Future<List<Expense>> call() => repository.getExpensesFromLocalStorage('expense');
 }

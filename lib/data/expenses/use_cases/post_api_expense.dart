@@ -6,5 +6,5 @@ class PostApiExpense {
   final ExpensesRepository repository;
   PostApiExpense({required this.repository});
 
-  Future<void> call(ExpenseToPost expense) => repository.postExpense(expense);
+  Future<void> call(Expense expense) => repository.postApiExpense(expense);
 }

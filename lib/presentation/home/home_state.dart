@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:onfly/data/expenses/model.dart';
 
 abstract class HomeState extends Equatable {}
@@ -29,8 +30,10 @@ class HomeStateNoConnection implements HomeState {
 
 class HomeStateLoaded extends HomeState {
   final List<Expense> expenses;
+  final double totalAmount;
+  final Position? position;
 
-  HomeStateLoaded({required this.expenses});
+  HomeStateLoaded({required this.expenses, required this.totalAmount, this.position});
 
   @override
   List<Object?> get props => [expenses];
